@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package' // Assuming Maven is used for building
+            }
+        }
+        stage('Unit and Integration Tests') {
+            steps {
+                sh 'mvn test' // Assuming Maven is used for running tests
+            }
+        }
+        stage('Code Analysis') {
+            steps {
+                // Integrate a code analysis tool like SonarQube or Checkstyle
+                sh 'sonar-scanner' // Assuming SonarQube scanner is configured
+            }
+        }
+        stage('Security Scan') {
+            steps {
+                // Integrate a security scanning tool like OWASP ZAP or SonarQube
+                sh 'zap-cli --quick-scan https://example.com' // Example command for OWASP ZAP
+            }
+        }
+        stage('Deploy to Staging') {
+            steps {
+                // Deploy the application to staging server using tools like AWS CLI or Jenkins Deploy plugin
+                sh 'aws s3 sync ./dist s3://staging.example.com'
+            }
+        }
+        stage('Integration Tests on Staging') {
+            steps {
+                // Run integration tests on the staging environment
+                sh 'npm run test:integration' // Example command for running integration tests
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                // Deploy the application to production server
+                sh 'ssh user@example.com "git pull && npm install && pm2 restart app"'
+            }
+        }
+    }
+}
